@@ -1,3 +1,78 @@
-TODO
+Debugging: Walking the Stack (Final Project)
+CS 271
+By: Salem Demssie, Ryan Nguyen, Sualeh RahmanSualeh Rahman
+Overview
 
-Write a readme describing your project. Find an open source project on github for inspiration.
+This project implements a debugging library using a mix of C and x86-64 assembly. It provides two key runtime debugging tools:
+
+- dump_registers(): Captures and prints all general-purpose registers.
+- dump_backtrace(): Traverses the call stack using saved frame pointers and prints a formatted backtrace.
+
+Directory Structure
+
+include/
+    debug.h
+lib/
+    
+src/
+    dump_registers.s
+    dump_backtrace.s
+    debug.c
+
+test/
+    main.c
+makefile
+
+README.txt (this file)
+
+Library Functions
+
+The following functions are declared in debug.h and implemented using a combination of C and assembly:
+
+void dump_registers(void);
+void dump_backtrace(void);
+
+dump_registers()
+
+This function dumps the following registers in this order:
+
+rax, rbx, rcx, rdx, rsi, rdi, rbp, rsp, r8, r9, r10, r11, r12, r13, r14, r15
+
+Each register is printed using the format:
+
+"%s\t%ld (0x%lx)\n"
+
+Where:
+- %s is the register name
+- %ld is the value in decimal
+- 0x%lx is the value in hexadecimal
+
+Note: The value of rsp is the one held prior to entering dump_registers().
+
+dump_backtrace()
+
+This function walks the call stack using saved base pointers and prints return addresses for each frame.
+
+It uses the dladdr() function (from libdl) to convert addresses into function names and filenames. Each frame is printed using:
+
+"%3ld: [%lx] %s () %s\n"
+
+Where:
+- %3ld is the call depth
+- %lx is the return address
+- %s is the symbol name
+- %s is the binary or shared library file name
+
+Build Instructions
+
+To build and run:
+
+cd test
+make
+./main
+makefile
+
+To compile make sure use
+- -g to include debug symbols
+- -ldl to link the dynamic linking library
+- Do not use -fomit-frame-pointer 
